@@ -358,9 +358,10 @@ footer p {
   bottom: 3rem;
   right: 3rem;
   background: var(--clr-secondary);
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   display: grid;
+  font-weight: bolder;
   place-items: center;
   border-radius: var(--radius);
   color: var(--clr-white);

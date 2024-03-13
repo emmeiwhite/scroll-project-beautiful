@@ -24,6 +24,45 @@ navToggleBtn.addEventListener("click", function () {
 });
 
 // ********** fixed navbar ************
+const nav = document.querySelector("#nav");
+const navHeight = nav.getBoundingClientRect().height;
+
+/** Top Link | Move to Top button to be shown only when scrollY of certain value happens, say 500 */
+
+const moveToTopBtn = document.querySelector(".top-link");
+window.addEventListener("scroll", function (e) {
+  const pageScrolledAlongY = window.scrollY;
+
+  if (pageScrolledAlongY > navHeight) {
+    nav.classList.add("fixed-nav");
+  } else {
+    nav.classList.remove("fixed-nav");
+  }
+
+  // moveToTop button
+  if (pageScrolledAlongY > 500) {
+    moveToTopBtn.classList.add("show-link");
+  } else {
+    moveToTopBtn.classList.remove("show-link");
+  }
+});
 
 // ********** smooth scroll ************
 // select links
+
+const scrollLinks = document.querySelectorAll(".scroll-link");
+scrollLinks.forEach((link) => {
+  link.addEventListener("click", function (e) {
+    e.preventDefault();
+    const href = e.currentTarget.getAttribute("href");
+    const id = href.slice(1);
+
+    const currentSection = document.getElementById(id);
+    console.log(currentSection);
+
+    window.scrollTo({
+      left: 0,
+      top: currentSection.offsetTop - navHeight,
+    });
+  });
+});
