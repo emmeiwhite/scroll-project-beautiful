@@ -16,10 +16,12 @@ navToggleBtn.addEventListener("click", function () {
   // linksContainer.classList.toggle("show-links");
 
   const linksHeight = links.getBoundingClientRect().height;
-  if (linksContainer.style.height === "") {
+  const linksContainerHeight = linksContainer.getBoundingClientRect().height;
+
+  if (linksContainerHeight === 0) {
     linksContainer.style.height = `${linksHeight}px`;
   } else {
-    linksContainer.style.height = "";
+    linksContainer.style.height = 0;
   }
 });
 
@@ -33,10 +35,14 @@ const moveToTopBtn = document.querySelector(".top-link");
 window.addEventListener("scroll", function (e) {
   const pageScrolledAlongY = window.scrollY;
 
-  if (pageScrolledAlongY > navHeight) {
-    nav.classList.add("fixed-nav");
+  if (this.innerWidth > 799) {
+    if (pageScrolledAlongY > navHeight) {
+      nav.classList.add("fixed-nav");
+    } else {
+      nav.classList.remove("fixed-nav");
+    }
   } else {
-    nav.classList.remove("fixed-nav");
+    nav.classList.add("fixed-nav");
   }
 
   // moveToTop button
@@ -51,6 +57,9 @@ window.addEventListener("scroll", function (e) {
 // select links
 
 const scrollLinks = document.querySelectorAll(".scroll-link");
+/*
+
+This is a cumbersome solution
 scrollLinks.forEach((link) => {
   link.addEventListener("click", function (e) {
     e.preventDefault();
@@ -58,14 +67,72 @@ scrollLinks.forEach((link) => {
     const id = href.slice(1);
 
     const currentSection = document.getElementById(id);
-    let position = currentSection.offsetTop;
+
+    // make use of navbar height and linksContainer height
+    const containerHeight = document
+      .querySelector(".links-container")
+      .getBoundingClientRect().height;
+    const navbarHeight = nav.getBoundingClientRect().height;
+
+    // This is the logic we use to scroll properly to the particular section because after the navbar becomes fixed, the offsetTop changes (because the fixed element comes out of the normal flow of document)
+    const isFixedNav = nav.classList.contains("fixed-nav");
+
+    let position = currentSection.offsetTop - navbarHeight;
+
+    if (!isFixedNav) {
+      position = position - navHeight;
+      // Here we are again subtracting the height of navbar when it is fi
+    }
+
+    // For Mobile screens
+    if (navbarHeight > 82) {
+      // Which means the links are opened on mobile
+      position = position + containerHeight;
+    }
 
     window.scrollTo({
       left: 0,
       top: position,
     });
 
+    
     // To close the linksContainer on each click of nav links
-    linksContainer.style.height = "";
+    linksContainer.style.height = 0;
+  });
+});
+
+*/
+
+/** Let's try scrollIntoView() */
+
+scrollLinks.forEach((link) => {
+  link.addEventListener("click", function (e) {
+    e.preventDefault();
+    // 1. Close the navbar whenever the user clicks on a link
+    linksContainer.style.height = 0;
+    const hrefAttributeValue = e.currentTarget.getAttribute("href");
+    const id = hrefAttributeValue.slice(1);
+
+    const currentSection = document.getElementById(id);
+
+    // This would sort it out for most of the cases, but when the navbar is not fixed we need to get this sorted!
+
+    // currentSection.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // Check if the navbar is fixed
+    const isFixedNav = nav.classList.contains("fixed-nav");
+
+    // Scroll the section into view, centering it within the viewport
+    if (!isFixedNav) {
+      const scrollToPosition = currentSection.offsetTop - 2 * navHeight;
+      window.scrollTo({
+        left: 0,
+        top: scrollToPosition,
+      });
+    } else {
+      currentSection.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    // Manually adjust the scrolling position to account for the navbar height
   });
 });
