@@ -58,11 +58,14 @@ scrollLinks.forEach((link) => {
     const id = href.slice(1);
 
     const currentSection = document.getElementById(id);
-    console.log(currentSection);
+    let position = currentSection.offsetTop;
 
     window.scrollTo({
       left: 0,
-      top: currentSection.offsetTop - navHeight,
+      top: position,
     });
+
+    // To close the linksContainer on each click of nav links
+    linksContainer.style.height = "";
   });
 });
